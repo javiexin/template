@@ -1,0 +1,26 @@
+{
+    "name": "javiexin/template",
+    "type": "phpbb-extension",
+    "description": "Improves the core template service with new methods",
+    "homepage": "",
+    "version": "1.0.0-dev",
+    "time": "2017-02-17",
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "javiexin",
+            "email": "javiexin@gmail.com",
+            "homepage": "",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4"
+    },
+    "extra": {
+        "display-name": "Improved Template Service",
+        "soft-require": {
+            "phpbb/phpbb": ">=3.2.0,<3.3.0@dev"
+        }
+    }
+}

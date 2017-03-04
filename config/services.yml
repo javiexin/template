@@ -1,0 +1,19 @@
+services:
+    javiexin.template.template:
+        class: javiexin\template\template\twig
+        decorates: template
+        public: false
+        arguments:
+            - '@path_helper'
+            - '@config'
+            - '@template_context'
+            - '@template.twig.environment'
+            - '%core.template.cache_path%'
+            - '@user'
+            - '@template.twig.extensions.collection'
+            - '@ext.manager'
+
+    javiexin.template.template_context:
+        class: javiexin\template\template\context
+        decorates: template_context
+        public: false
