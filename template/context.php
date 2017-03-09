@@ -171,7 +171,7 @@ class context extends \phpbb\template\context
 	* @param	mixed	$key		Provided for backward compatibility, only considered if last level block selector value === null, same semantics
 	* @param	string	$mode		Mode to execute (valid modes are 'find', 'retrieve', 'insert', 'multiinsert', 'change' and 'delete')
 	*			'find'			the vararray is ignored (but must be an array), and the integer index of the last level block is returned
-	*			'retrieve'		the vararray is a list of variable names to retrieve from the selected block
+	*			'retrieve'		the vararray is a list of variable names to retrieve from the selected block, empty array gets all block vars
 	*			'insert'		the vararray is inserted at the given position (position counting from zero)
 	*			'multiinsert'	the vararray is an array of vararrays, inserted at the given position (position counting from zero)
 	*			'change'		the current block gets merged with the vararray (resulting in new \key/value pairs be added and existing keys be replaced by the new \value)
@@ -382,7 +382,7 @@ class context extends \phpbb\template\context
 	* Retrieve key variable pairs from a block
 	*
 	* @param	array	$block			a reference to the block where we have to retrieve the key variable pairs
-	* @param	array	$vararray		an array of variablle names to be retrieved
+	* @param	array	$vararray		an array of variablle names to be retrieved, empty array retrieves all vars
 	* @param	mixed	$key			search key used in last block, ignored
 	* @param	string	$name			name of the block where we are retrieving
 	* @param	int		$index			index were we have to retrieve the vars
@@ -390,15 +390,31 @@ class context extends \phpbb\template\context
 	*/
 	protected function retrieve_block_array(&$block, array $vararray, $key, $name, $index)
 	{
-		if (!isset($block[$name]))
+		if (!isset($block[$name][$index]))
 		{
 			return false;
 		}
 
 		$result = array();
-		foreach ($vararray as $varname)
+		if ($vararray === array())
 		{
-			$result[$varname] = isset($block[$name][$index][$varname]) ? $block[$name][$index][$varname] : null;
+			// The calculated vars that depend on the block position are excluded from the complete block returned results
+			$excluded_vars = array('S_FIRST_ROW', 'S_LAST_ROW', 'S_BLOCK_NAME', 'S_NUM_ROWS', 'S_ROW_COUNT', 'S_ROW_NUM');
+
+			foreach ($block[$name][$index] as $varname => $varvalue)
+			{
+				if ($varname === strtoupper($varname) && !is_array($varvalue) && !in_array($varname, $excluded_vars))
+				{
+					$result[$varname] = $varvalue;
+				}
+			}
+		}
+		else
+		{
+			foreach ($vararray as $varname)
+			{
+				$result[$varname] = isset($block[$name][$index][$varname]) ? $block[$name][$index][$varname] : null;
+			}
 		}
 		return $result;
 	}
